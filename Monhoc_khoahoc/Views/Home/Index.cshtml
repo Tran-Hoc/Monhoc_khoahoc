@@ -1,0 +1,103 @@
+﻿@model IEnumerable<Monhoc_khoahoc.Data.KhoaHoc>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-8">
+        Môn học
+
+        <table class="table" id="tableMon">
+            <thead>
+                <tr>
+                    <th>
+                        Tên môn
+                    </th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="contentTBL">
+              
+            </tbody>
+        </table>
+
+    </div>
+    <div class="col-4">
+        Khoá học
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Tên khoá học
+                    </th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a href="#" class="btnSelect" data-id="@item.Id"> @item.Tenmon</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+
+
+@section script{
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '.btnSelect', function () {
+                var id = $(this).data("id");
+                //var token = $('input[name="__RequestVerificationToken"]').val();
+                //var conf = confirm("Bạn có muốn xoá bản ghi này không?");
+                //alert("ID " + id);
+                               /* if (conf == true)*/ {
+                    $.ajax({
+                        url: "/Home/details",
+                        type: "post",
+                        //beforeSend: function (xhr) {
+                        //    xhr.setRequestHeader("XFRS-TOKEN", $('input:hidden[name="_RequestVerificationToken"]').val());
+                        //},
+                        data: {
+                            //__RequestVerificationToken: token,
+                            id: id
+                        },
+                        success: function (rs) {
+                            if (rs.success) {
+                                //$('#row_' + id).remove();
+                                //alert(rs.data);
+                                //console.log(rs.data);
+                                var obj = jQuery.parseJSON(rs.data);
+                                //console.log(obj);
+                                var html="";
+                                for (let item of obj) {
+                                    //console.log(item)
+                                    //console.log(item["Tenmon"]);
+
+                                    html+= "<tr><td>" + item["Tenmon"]+ "</td></tr> ";
+                                }
+                                document.getElementById('contentTBL').innerHTML = html;
+                            }
+                            else {
+                                alert("Không thành công!");
+                            }
+                        },
+                        error: function (xhr) {
+                            alert("Không thành công!");
+                        }
+
+                    })
+                }
+            })
+        })
+    </script>
+}
